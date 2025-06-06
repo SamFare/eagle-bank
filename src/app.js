@@ -7,24 +7,25 @@ const app = express();
 
 app.use(express.json());
 app.use(
-  OpenApiValidator.middleware({
-    apiSpec: path.join(__dirname, '../openapi.yaml'),
-    validateRequests: true,
-    validateResponses: true,
-    unknownFormats: 'ignore'
-  }));
+    OpenApiValidator.middleware({
+        apiSpec: path.join(__dirname, '../openapi.yaml'),
+        validateRequests: true,
+        validateResponses: true,
+        validateFormats: false
+    })
+);
 app.get('/health', (req, res) => {
-      res.status(200).send('Hello world');
+    res.status(200).send('Hello world');
 });
 
 app.use(accountsRouter);
 
 // Error handler for validation errors
 app.use((err, req, res, next) => {
-      res.status(err.status || 500).json({
-          message: err.message,
-          errors: err.errors,
-      });
+    res.status(err.status || 500).json({
+        message: err.message,
+        errors: err.errors,
+    });
 });
 
 module.exports = app;
