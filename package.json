@@ -6,14 +6,15 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "jest",
-    "test-watch": "jest --watch"
-  },
-  "keywords": [],
+    "test-watch": "jest --watch",
+    "init-db": "node src/scripts/init-db.js"
+  },  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
-    "express-openapi-validator": "^5.5.3"
+    "express-openapi-validator": "^5.5.3",
+    "mysql2": "^3.14.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

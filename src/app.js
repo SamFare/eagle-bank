@@ -2,7 +2,7 @@ const express = require('express');
 const OpenApiValidator = require('express-openapi-validator');
 const path = require('path');
 const accountsRouter = require('./routes/accounts');
-
+const usersRouter = require('./routes/users');
 const app = express();
 
 app.use(express.json());
@@ -19,6 +19,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use(accountsRouter);
+app.use(usersRouter);
 
 // Error handler for validation errors
 app.use((err, req, res, next) => {
