@@ -617,6 +617,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /v1/users/login:
+    post:
+      tags:
+        - user
+      description: Login a user
+      operationId: loginUser
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - password
+              properties:
+                - name: userId
+                  in: path
+                  description: ID of the user
+                  required: true
+                  schema:
+                    type: string
+                    pattern: ^usr-[A-Za-z0-9]+$
+                - name: password
+                  in: body
+                  description: User's password
+                  required: true
+                  schema:
+                    type: string
+                    format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - token
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for authentication
+        '400':
+          description: Invalid credentials format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestErrorResponse"
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     CreateBankAccountRequest:

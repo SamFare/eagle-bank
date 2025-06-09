@@ -83,4 +83,13 @@ describe('User Endpoints', () => {
             expect(response.body.id).toBe(newUserResponse.body.id);
         });
     });
+
+    describe('POST v1/users/login', () => { 
+        it('Returns 400 when there is no valid user provided', async () => { 
+            const newUserResponse = await request(app)
+                .post(`/v1/users/login`)
+                .set('Authorization', 'Bearer test-token')
+                .send({userID: `usr-notreal`, password: `notreal` });
+        })
+    })
 });
