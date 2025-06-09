@@ -23,7 +23,6 @@ describe('User Endpoints', () => {
         it('creates a new user successfully', async () => {
             const response = await request(app)
                 .post('/v1/users')
-                .set('Authorization', 'Bearer test-token')
                 .send(userData);
 
             expect(response.status).toBe(201);
@@ -34,7 +33,6 @@ describe('User Endpoints', () => {
         it('Adds a UUID as the ID for a user', async () => {
             const response = await request(app)
                 .post('/v1/users')
-                .set('Authorization', 'Bearer test-token')
                 .send(userData);
 
             expect(response.status).toBe(201);
@@ -45,7 +43,6 @@ describe('User Endpoints', () => {
         it('Adds a created and updated timestamp to the response', async () => {
             const response = await request(app)
                 .post('/v1/users')
-                .set('Authorization', 'Bearer test-token')
                 .send(userData);
 
             expect(response.status).toBe(201);
@@ -57,7 +54,7 @@ describe('User Endpoints', () => {
     });
 
     describe('GET /v1/users', () => {
-        it('returns the requested user', async () => {
+        it('requires a new auth token to access the user', async () => { 
             const newUser = {
                 name: Math.random(1, 1000000).toString(),
                 address: {
@@ -77,19 +74,71 @@ describe('User Endpoints', () => {
 
             const response = await request(app)
                 .get(`/v1/users/${encodeURIComponent(newUserResponse.body.id)}`)
-                .set('Authorization', 'Bearer test-token');
+                .set('Authorization', 'Bearer eyJhbthseiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c3ItMTc0OTQ4MTk1MDEwNCIsImlhdCI6MTc0OTQ4MjAxNiwiZXhwIjoxNzQ5NDg1NjE2fQ.zZhvJSj4Oq5VAywgS6etryNenZTSA1Ra3EpkiDxkrNM');
+            
+            expect(response.status).toBe(401);
+
+        });
+
+        it('returns the requested user', async () => {
+            const newUser = {
+                name: Math.random(1, 1000000).toString(),
+                address: {
+                    line1: '123 Test St',
+                    town: 'Testville',
+                    county: 'Testshire',
+                    postcode: 'TE1 1ST'
+                },
+                phoneNumber: '+441234567890',
+                email: 'test@example.com'
+            };
+
+            const newUserResponse = await request(app)
+                .post(`/v1/users/`)
+                .set('Authorization', 'Bearer test-token')
+                .send(newUser);
+
+            const authKeyResponse = await request(app)
+                .post(`/v1/users/${newUserResponse.body.id}/login`)
+
+            const response = await request(app)
+                .get(`/v1/users/${encodeURIComponent(newUserResponse.body.id)}`)
+                .set('Authorization', `Bearer ${authKeyResponse.body.authToken}`);
 
             expect(response.status).toBe(200);
             expect(response.body.id).toBe(newUserResponse.body.id);
         });
     });
 
-    describe('POST v1/users/login', () => { 
-        it('Returns 400 when there is no valid user provided', async () => { 
+    describe('POST v1/users/:userId/login', () => {
+        it('Returns 400 when there is no valid user provided', async () => {
+            const response = await request(app)
+                .post(`/v1/users/${encodeURIComponent(`usr-notreal`)}/login`)
+
+            expect(response.status).toBe(400);
+        });
+
+        it('Returns 200 when the user exists', async () => {
+            const newUser = {
+                name: Math.random(1, 1000000).toString(),
+                address: {
+                    line1: '123 Test St',
+                    town: 'Testville',
+                    county: 'Testshire',
+                    postcode: 'TE1 1ST'
+                },
+                phoneNumber: '+441234567890',
+                email: 'test@example.com'
+            };
+
             const newUserResponse = await request(app)
-                .post(`/v1/users/login`)
-                .set('Authorization', 'Bearer test-token')
-                .send({userID: `usr-notreal`, password: `notreal` });
+                .post(`/v1/users/`)
+                .send(newUser);
+
+            const response = await request(app)
+                .post(`/v1/users/${newUserResponse.body.id}/login`)
+
+            expect(response.status).toBe(200);
         })
     })
 });

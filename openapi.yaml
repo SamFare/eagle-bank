@@ -617,50 +617,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /v1/users/login:
+  /v1/users/{userId}/login:
     post:
       tags:
         - user
       description: Login a user
       operationId: loginUser
-      requestBody:
-        description: User credentials
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - userId
-                - password
-              properties:
-                - name: userId
-                  in: path
-                  description: ID of the user
-                  required: true
-                  schema:
-                    type: string
-                    pattern: ^usr-[A-Za-z0-9]+$
-                - name: password
-                  in: body
-                  description: User's password
-                  required: true
-                  schema:
-                    type: string
-                    format: password
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: string
+            pattern: ^usr-[A-Za-z0-9]+$
       responses:
         '200':
           description: Login successful
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - token
-                properties:
-                  token:
-                    type: string
-                    description: JWT token for authentication
+                $ref: "#/components/schemas/AuthSuccessfullResponse"
         '400':
           description: Invalid credentials format
           content:
@@ -989,6 +966,13 @@ components:
                 type: string
               type:
                 type: string
+    AuthSuccessfullResponse: 
+      type: object
+      required:
+        - authToken
+      properties:
+        authToken:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http
