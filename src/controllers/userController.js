@@ -1,8 +1,10 @@
 const db = require('../config/database');
+const { v4: uuidv4 } = require('uuid');
+
 
 const saveNewUserToDatabase = async (userData) => {
     const connection = await db.getConnection();
-    const userId = `usr-${Date.now()}`;
+    const userId = `usr-${uuidv4().replaceAll("-", "")}`;
 
     try {
         await userInsertRequest(connection, userId, userData);
