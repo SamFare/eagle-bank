@@ -4,7 +4,7 @@
   "description": "A Repository for code to implement the Barclays tech test",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node src/server.js --configPath ../../env/local/secrets.json",
     "test": "jest",
     "test-watch": "jest --watch",
     "init-db": "node src/scripts/init-db.js"
@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "eslint": "^9.28.0",
     "express": "^5.1.0",
     "express-openapi-validator": "^5.5.3",
     "jsonwebtoken": "^9.0.2",

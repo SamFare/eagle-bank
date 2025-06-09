@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { saveNewUserToDatabase, retrieveUserFromDatabaseByUserId } = require('../controllers/userController');
 const jwt = require('jsonwebtoken');
+const config = require('../config.js');
 
 router.post('/v1/users', async (req, res) => {
     const user = await saveNewUserToDatabase(req.body);
@@ -16,7 +17,7 @@ router.post('/v1/users/:userId/login', async (req, res) => {
             details: [] 
         });
     }
-    const token = jwt.sign({ userId: user.id }, 'your-secret-key', {
+    const token = jwt.sign({ userId: user.id }, config.jwtSecret, {
         expiresIn: '1h',
     });
 
@@ -27,7 +28,7 @@ router.post('/v1/users/:userId/login', async (req, res) => {
 router.get('/v1/users/:userId', async (req, res) => {
     try { 
         const token = req.header('Authorization').replace("Bearer ", "")
-        const decodedToken = jwt.verify(token, 'your-secret-key');
+        const decodedToken = jwt.verify(token, config.jwtSecret);
     } catch { 
         res.status(401).send()
     }
