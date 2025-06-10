@@ -56,6 +56,16 @@ describe('User Endpoints', () => {
 
         });
 
+        it('Returns 400 when  invalid user details are inserted', async () => { 
+            userData.name = null;
+
+            const response = await request(app)
+                .post('/v1/users')
+                .send(userData);
+
+            expect(response.status).toBe(400);
+        });
+
     }); 
 
     describe('GET /v1/users', () => {
