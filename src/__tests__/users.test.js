@@ -9,11 +9,11 @@ describe('User Endpoints', () => {
         await db.end();
         jest.clearAllTimers();
     });
-     
+
    describe('POST /v1/users', () => {
         beforeEach(() => {
             userData = {
-                name: Math.random(1, 1000000).toString(),
+                name: generateRandomName(),
                 address: {
                     line1: '123 Test St',
                     town: 'Testville',
@@ -61,7 +61,7 @@ describe('User Endpoints', () => {
     describe('GET /v1/users', () => {
         it('requires a new auth token to access the user', async () => { 
             const newUser = {
-                name: Math.random(1, 1000000).toString(),
+                name: generateRandomName(),
                 address: {
                     line1: '123 Test St',
                     town: 'Testville',
@@ -87,7 +87,7 @@ describe('User Endpoints', () => {
 
         it('returns the requested user', async () => {
             const newUser = {
-                name: Math.random(1, 1000000).toString(),
+                name: generateRandomName(),
                 address: {
                     line1: '123 Test St',
                     town: 'Testville',
@@ -125,7 +125,7 @@ describe('User Endpoints', () => {
 
         it('Returns 200 when the user exists', async () => {
             const newUser = {
-                name: Math.random(1, 1000000).toString(),
+                name: generateRandomName(),
                 address: {
                     line1: '123 Test St',
                     town: 'Testville',
@@ -147,3 +147,19 @@ describe('User Endpoints', () => {
         })
     })
 });
+
+const generateRandomName = () => { 
+    const lowercaseAsciiStart = 97;
+    let name = '';
+
+    var rand = Math.floor((Math.random() + 1) * 8)
+
+    for (var i = 0; i < rand; i++) {
+        const letterIndex = Math.floor(Math.random() * 26);
+        const letter = String.fromCharCode(lowercaseAsciiStart + letterIndex);
+        name += letter
+    }
+    
+    return name
+
+}

@@ -68,6 +68,9 @@ const userRetreivalRequest = async (connection, userId) => {
 };
 
 const userInsertRequest = async (connection, userId, userData) => {
+    if(!validateUserData(userData)) { 
+        throw new Error('user data does not match data integrety requirements');
+    }
     await connection.query(
             `INSERT INTO users (
                 id, 
@@ -90,7 +93,27 @@ const userInsertRequest = async (connection, userId, userData) => {
                 userData.address.postcode
             ]
         );
+    
 }
+
+const validateUserData = (userData) => {
+ const onlyLettersAndSpaces = /^[A-Za-z ]+$/;
+ const phoneNumber = /^\+[1-9]\d{1,14}$/;
+ const postcodeRegex = /^([A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$/;
+ const addressRegex = /^[A-Za-z0-9\s,'-]+$/;
+ const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  return onlyLettersAndSpaces.test(userData.name) &&
+         phoneNumber.test(userData.phoneNumber) &&
+         postcodeRegex.test(userData.address.postcode) &&
+         addressRegex.test(userData.address.line1) &&
+         addressRegex.test(userData.address.town) &&
+         addressRegex.test(userData.address.county) &&
+         emailRegex.test(userData.email);
+
+}
+
+
 module.exports = {
     saveNewUserToDatabase,
     retrieveUserFromDatabaseByUserId
