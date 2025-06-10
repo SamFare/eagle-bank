@@ -1,11 +1,16 @@
 const request = require('supertest');
 const app = require('../app');
+const db = require('../config/database');
 
 let userData = {};
 
 describe('User Endpoints', () => {
-    describe('POST /v1/users', () => {
-
+    afterAll(async () => {
+        await db.end();
+        jest.clearAllTimers();
+    });
+     
+   describe('POST /v1/users', () => {
         beforeEach(() => {
             userData = {
                 name: Math.random(1, 1000000).toString(),
@@ -51,7 +56,7 @@ describe('User Endpoints', () => {
 
         });
 
-    });
+    }); 
 
     describe('GET /v1/users', () => {
         it('requires a new auth token to access the user', async () => { 
@@ -108,9 +113,9 @@ describe('User Endpoints', () => {
             expect(response.status).toBe(200);
             expect(response.body.id).toBe(newUserResponse.body.id);
         });
-    });
+    }); 
 
-    describe('POST v1/users/:userId/login', () => {
+   describe('POST v1/users/:userId/login', () => {
         it('Returns 400 when there is no valid user provided', async () => {
             const response = await request(app)
                 .post(`/v1/users/${encodeURIComponent(`usr-notreal`)}/login`)
